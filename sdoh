@@ -1,0 +1,8 @@
+SELECT d.FileDetailID, d.FilePattern, d.FilePath, d.ErrorPath, d.ArchivePath
+FROM HSABC${env.id.upper}.ImportFile_FileDetail d
+JOIN HSABC${env.id.upper}.ImportFile_Source s
+  ON d.SourceID = s.SourceID
+JOIN HSABC${env.id.upper}.ImportFile_FileType f
+  ON d.FileTypeID = f.FileTypeID
+WHERE s.SourceName = 'SXC'
+  AND f.FileType = 'SDOHData';
