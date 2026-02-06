@@ -1,12 +1,14 @@
-UPDATE f
-FROM HSABC${env.id.upper}.ImportFile_FileDetail f
-JOIN HSABC${env.id.upper}.ImportFile_Source s
-  ON f.SourceID = s.SourceID
-JOIN HSABC${env.id.upper}.ImportFile_FileType t
-  ON f.FileTypeID = t.FileTypeID
-SET f.FilePath    = '$SERVER\OSS_Inbound\External\Med_adherence\AdhereHealth',
-    f.ErrorPath   = '$SERVER\OSS_Inbound\External\Med_adherence\AdhereHealth\Error',
-    f.ArchivePath = '$SERVER\OSS_Inbound\External\Med_adherence\AdhereHealth\Archive',
-    f.FilePattern = '*SDOHActivity*'
-WHERE s.SourceName = 'SXC'
-  AND t.FileType   = 'SDOHData';
+UPDATE HSABC${env.id.upper}.ImportFile_FileDetail f
+SET FilePath    = '$SERVER\OSS_Inbound\External\Med_adherence\AdhereHealth',
+    ErrorPath   = '$SERVER\OSS_Inbound\External\Med_adherence\AdhereHealth\Error',
+    ArchivePath = '$SERVER\OSS_Inbound\External\Med_adherence\AdhereHealth\Archive',
+    FilePattern = '*SDOHActivity*'
+WHERE EXISTS (
+    SELECT 1
+    FROM HSABC${env.id.upper}.ImportFile_Source s,
+         HSABC${env.id.upper}.ImportFile_FileType t
+    WHERE s.SourceID   = f.SourceID
+      AND t.FileTypeID = f.FileTypeID
+      AND s.SourceName = 'SXC'
+      AND t.FileType   = 'SDOHData'
+);
